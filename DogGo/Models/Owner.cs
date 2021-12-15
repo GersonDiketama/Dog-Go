@@ -21,5 +21,7 @@ namespace DogGo.Models
 
         public List<Dog> Dogs;
 
+
+
     }
 }

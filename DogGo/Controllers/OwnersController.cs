@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DogGo.Repositories;
 using DogGo.Models;
+using DogGo.Models.ViewModels;
 
 namespace DogGo.Controllers
 {
@@ -13,10 +14,20 @@ namespace DogGo.Controllers
     {
 
         private readonly IOwnerRepository _ownerRepo;
+        private readonly IDogRepository _dogRepo;
+        private readonly IWalkerRepository _walkerRepo;
+        private readonly INeighborhoodRepository _neighborhoodRepo;
 
-        public OwnersController(IOwnerRepository ownerRepository)
+        public OwnersController(
+            IOwnerRepository ownerRepository,
+            IDogRepository dogRepository,
+            IWalkerRepository walkerRepository,
+            INeighborhoodRepository neighborhoodRepository)
         {
             _ownerRepo = ownerRepository;
+            _dogRepo = dogRepository;
+            _walkerRepo = walkerRepository;
+            _neighborhoodRepo = neighborhoodRepository;
         }
 
         // GET: OwnersController1
@@ -31,76 +42,102 @@ namespace DogGo.Controllers
         public ActionResult Details(int id)
         {
             Owner owner = _ownerRepo.GetOwnersById(id);
+            List<Dog> dogs = _dogRepo.GetDogsByOwnerId(owner.Id);
+            List<Walker> walkers = _walkerRepo.GetWalkersInNeighborhood(owner.NeighborhoodId);
 
-            if (owner == null)
+            ProfileViewModel vm = new ProfileViewModel()
             {
-                return NotFound();
-            }
+                Owner = owner,
+                Dogs = dogs,
+                Walkers = walkers
+            };
 
-
-            return View(owner);
+            return View(vm);
         }
 
         // GET: OwnersController1/Create
         public ActionResult Create()
         {
-            return View();
+            List<Neighborhood> neighborhoods = _neighborhoodRepo.GetAll();
+
+            OwnerFormViewModel vm = new OwnerFormViewModel()
+            {
+                Owner = new Owner(),
+                Neighborhoods = neighborhoods
+            };
+
+            return View(vm);
         }
 
         // POST: OwnersController1/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Owner owner)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+            _ownerRepo.AddOwner(owner);
+
+            return RedirectToAction("Index");
             }
-            catch
+            catch(Exception ex)
             {
-                return View();
+            return View(owner);
             }
         }
 
         // GET: OwnersController1/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            Owner owner = _ownerRepo.GetOwnersById(id);
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
+            return View(owner);
         }
 
         // POST: OwnersController1/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Owner owner)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _ownerRepo.UpdateOwner(owner);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(owner);
             }
         }
 
         // GET: OwnersController1/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            Owner owner = _ownerRepo.GetOwnersById(id);
+
+            return View(owner);
         }
 
         // POST: OwnersController1/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Owner owner)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _ownerRepo.DeleteOwner(id);
+
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(owner);
             }
         }
     }

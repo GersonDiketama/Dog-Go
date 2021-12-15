@@ -15,5 +15,7 @@ namespace DogGo.Models
         public string Breed { get; set; }
         public string Notes { get; set; }
         public string ImageUrl { get; set; }
+
+        public List<Owner> owner;
     }
 }
