@@ -7,25 +7,18 @@ namespace DogGo.Models.ViewModels
 {
     public class WalkerProfileViewModel
     {
+        public Walker Walker { get; set; }
 
-        //public Walker walker { get; set; }
-
-        //public List<Walk> Walk;
-
-        //public string TotalTime
-        //{
-        //    get
-        //    {
-        //        var totalMinutes = Walks.Select(walker => walker, Duration).Sum() / 60;
-
-        //        var totalHours = totalMinutes / 60;
-
-        //        var minutes = totalMinutes % 60;
-
-        //        return $"Total {totalHours} hr {minutes}";
-        //    }
-
-        //}
-
+        public List<Walk> Walks { get; set; }
+        public string TotalTime
+        {
+            get
+            {
+                var totalMinutes = Walks.Select(w => w.Duration).Sum() / 60;
+                var totalHours = totalMinutes / 60;
+                var minutes = totalMinutes % 60;
+                return $"{totalHours} hr {minutes} min";
+            }
+        }
     }
 }
