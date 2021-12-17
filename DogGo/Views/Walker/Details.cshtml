@@ -6,6 +6,14 @@
 
 <h1>Details</h1>
 
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Walker.Id }) |
+    @Html.ActionLink("Create", "Create", new { id = Model.Walker.Id }) |
+    <a asp-controller="Walker" asp-action="Create">Add new Walk</a>
+</div>
+
+
 <div>
     <h4>Walker</h4>
     <hr />
